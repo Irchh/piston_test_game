@@ -7,6 +7,7 @@ pub enum Animations {
 }
 
 impl Animations {
+	// TODO: Change to something like 'is(&self, Animations)'
 	pub fn is_jump(&self) -> bool {
 		match self {
 			Animations::Jump => true,
@@ -78,7 +79,6 @@ impl Player {
 		}
 	}
 	pub fn update(&mut self, keystate: &mut crate::Keys, world: &crate::World, camera: &mut crate::Camera, collidables: &Vec<crate::collision::Cube>, args: &piston::UpdateArgs) {
-
         // Controls
         if keystate.space && self.on_ground{
             self.velocity.y = -5.;

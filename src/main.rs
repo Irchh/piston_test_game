@@ -105,7 +105,6 @@ impl App {
             player.update(&mut self.keystate, &self.world, &mut self.camera, &self.obj, args);
         }
 
-        //print!("\r{}[2KVelocity: {}", std::char::from_u32(27).expect("lol"), self.obj[0].velocity.y);
         if self.players.len() > 0 {
             let _true_velocity = (self.players[0].velocity.y*self.players[0].velocity.y+self.players[0].velocity.x*self.players[0].velocity.x).sqrt();
             print!("\rVelocity: {:.2} m/s  ", _true_velocity as f32);
@@ -133,7 +132,7 @@ fn main() {
     // Change this to OpenGL::V2_1 if not working.
     let opengl = OpenGL::V3_2;
 
-    // Create an Glutin window.
+    // Create a window.
     let mut window: PistonWindow = WindowSettings::new(
             "spinning-square",
             [400, 400]
@@ -164,24 +163,10 @@ fn main() {
     };
 
     let cube1 = Cube::new(32., 32., 200., 200., "assets/sprites/brick.png", &mut window);
-    let cube1_1 = Cube::new(32., 32., 232., 200., "assets/sprites/brick.png", &mut window);
-    /*let cube2 = Cube::new(70., 50., 85., 200., "assets/sprites/brick.png", &mut window);
-    let cube3 = Cube::new(50., 50., 25., 150., "assets/sprites/brick.png", &mut window);
-    let cube4 = Cube::new(50., 50., 75., 95., "assets/sprites/brick.png", &mut window);
-    let cube5 = Cube::new(500., 50., 200., 350., "assets/sprites/brick.png", &mut window);
-    let cube6 = Cube::new(10., 500., 350., 200., "assets/sprites/brick.png", &mut window);
-    let cube7 = Cube::new(10., 50., 308., 300., "assets/sprites/brick.png", &mut window);
-    */
+    let cube2 = Cube::new(32., 32., 232., 200., "assets/sprites/brick.png", &mut window);
+
     app.mobs.push(cube1);
-    app.mobs.push(cube1_1);
-    /*
-    app.obj.push(cube2);
-    app.obj.push(cube3);
-    app.obj.push(cube4);
-    app.obj.push(cube5);
-    app.obj.push(cube6);
-    app.obj.push(cube7);
-    */
+    app.mobs.push(cube2);
 
     let map = loader::load_map("assets/maps/test.tmx", &mut app, &mut window);
 
