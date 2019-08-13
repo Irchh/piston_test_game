@@ -5,4 +5,4 @@ This is a simple game to get started with rust as a programming language. Since 
 Contribute at will. Anything goes, but no bad words now!
 
 ## Licence
-See LICENCE file
+See LICENCE file.
