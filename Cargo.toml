@@ -3,6 +3,11 @@ name = "piston_test_game"
 version = "0.1.0"
 authors = ["Irjan Olsen <irjan.olsen@gmail.com>"]
 edition = "2018"
+readme = "README.md"
+license = "MIT"
+keywords = ["piston", "2d", "game"]
+categories = ["games"]
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
