@@ -147,11 +147,6 @@ impl Player {
                 self.pos.y = obj.pos.y-(obj.size.y+self.size.y)/2.;
                 self.on_ground = true;
             }else
-            if cube_collider(self, obj, Side::South) {
-                self.velocity.y = if self.velocity.y < 0. { 0. }
-                                 else { self.velocity.y };
-                self.pos.y = obj.pos.y+(obj.size.y+self.size.y)/2.;
-            }
             if cube_collider(self, obj, Side::East) {
                 self.velocity.x = if self.velocity.x < 0. { 0. }
                                  else { self.velocity.x };
@@ -203,6 +198,11 @@ impl Player {
                 }else if !keystate.space {
                     self.state.walljump = false;
                 }
+            }else
+            if cube_collider(self, obj, Side::South) {
+                self.velocity.y = if self.velocity.y < 0. { 0. }
+                                 else { self.velocity.y };
+                self.pos.y = obj.pos.y+(obj.size.y+self.size.y)/2.;
             }
         }
 
