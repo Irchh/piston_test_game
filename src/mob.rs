@@ -2,6 +2,9 @@ use crate::METER_IN_PIXELS;
 
 pub enum Animations {
 	Stand,
+	Walk1,
+	Walk2,
+	Walk3,
 	Jump,
 	None,
 }
@@ -46,6 +49,7 @@ pub struct Player {
 	pub color: [f64; 4],
 	pub texture: crate::mob::Animations,
 	pub animation: crate::render::PlayerAnimation,
+	pub ani_length: f64,
 	pub state: crate::mob::MobState,
 }
 
@@ -64,26 +68,30 @@ impl Player {
 			color: [1.0, 1.0, 1.0, 1.0],
 			texture: crate::mob::Animations::Stand,
 			animation,
+			ani_length: 0.0,
 			state: crate::mob::MobState::new(),
 		}
 	}
-	pub fn play_animation(&mut self, ani: crate::mob::Animations) {
+	pub fn play_animation(&mut self, ani: crate::mob::Animations, length: f64) {
 		match ani {
 			crate::mob::Animations::Jump => {
 				self.texture = crate::mob::Animations::Jump;
-				()
+			},
+			crate::mob::Animations::Walk1 => {
+				self.texture = crate::mob::Animations::Walk1;
 			},
 			_ => {
 				self.texture = crate::mob::Animations::Stand;
 			},
 		}
+		self.ani_length = length;
 	}
 	pub fn update(&mut self, keystate: &mut crate::Keys, world: &crate::World, camera: &mut crate::Camera, collidables: &Vec<crate::collision::Cube>, args: &piston::UpdateArgs) {
         // Controls
         if keystate.space && self.on_ground{
             self.velocity.y = -5.;
             self.on_ground = false;
-            self.play_animation(crate::mob::Animations::Jump);
+            //self.play_animation(crate::mob::Animations::Jump, 0.6);
         }
         if keystate.d {
             if self.on_ground {
@@ -198,10 +206,17 @@ impl Player {
             }
         }
 
-        //*
         camera.position.x = (self.pos.x-camera.w)*camera.zoom+(camera.w*camera.zoom)/2.;
         camera.position.y = (self.pos.y-camera.h)*camera.zoom+(camera.h*camera.zoom)/2.;
-        // */
+
+        self.ani_length -= args.dt;
+        if self.ani_length < 0.0 && self.velocity.y == 0.0 && (self.velocity.x > 0.1 || self.velocity.x < -0.1) {
+        	match self.texture {
+        		crate::mob::Animations::Stand => self.play_animation(crate::mob::Animations::Walk1, 0.2),
+        		crate::mob::Animations::Walk1 => self.play_animation(crate::mob::Animations::Stand, 0.2),
+        		_ => (),
+        	}
+        }
 	}
 	pub fn render(&mut self, camera: &crate::Camera, window: &mut piston_window::PistonWindow, e: &piston::Event) {
 		let (x, y) = (self.pos.x, self.pos.y);
@@ -209,8 +224,10 @@ impl Player {
 		let look_dir = &self.state.look_dir;
 		let texture = match self.texture {
 			crate::mob::Animations::Jump => &self.animation.jump,
+			crate::mob::Animations::Walk1 => &self.animation.walk1,
 			crate::mob::Animations::Stand => &self.animation.stand,
 			crate::mob::Animations::None => &self.animation.stand,
+			_ => panic!("Invalid animation!"),
 		};
 
 		let scale = &camera.zoom;

@@ -79,8 +79,6 @@ impl App {
         #[allow(dead_code)]
         const BLACK: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
 
-	    self.camera.w = args.window_size[0];
-	    self.camera.h = args.window_size[1];
 		self.gl.draw(args.viewport(), |_c, gl| {
 	        clear(GREEN, gl);
 	    });
@@ -91,8 +89,8 @@ impl App {
         }
 
         for mob in &mut self.mobs {
-            mob._render(&mut self.gl, &self.camera, BLUE, args);
-            //mob.render(&self.camera, window, e);
+            //mob._render(&mut self.gl, &self.camera, BLUE, args);
+            mob.render(&self.camera, window, e);
         }
 
         for player in &mut self.players {
@@ -105,9 +103,12 @@ impl App {
             player.update(&mut self.keystate, &self.world, &mut self.camera, &self.obj, args);
         }
 
-        if self.players.len() > 0 {
+        // This can lag the game quite a bit, or atleast slow down the updates.
+        if self.players.len() > 0 && false { 
             let _true_velocity = (self.players[0].velocity.y*self.players[0].velocity.y+self.players[0].velocity.x*self.players[0].velocity.x).sqrt();
             print!("\rVelocity: {:.2} m/s  ", _true_velocity as f32);
+            print!("Animation length: {:.2}  ", self.players[0].ani_length);
+            print!("W/H: {:.2}/{:.2}   ", self.camera.w, self.camera.h);
         }
     }
     fn btn_press(&mut self, key: &piston::Button) {
@@ -135,7 +136,7 @@ fn main() {
     // Create a window.
     let mut window: PistonWindow = WindowSettings::new(
             "spinning-square",
-            [400, 400]
+            [800, 600]
         )
         .exit_on_esc(true)
         .graphics_api(opengl)
@@ -172,7 +173,9 @@ fn main() {
 
     let mut player_animation: Vec<&str> = Vec::new();
     let ani_str = "assets/sprites/Player1.png";
-    for i in 0..6 {
+    player_animation.push(ani_str);
+    player_animation.push("assets/sprites/Player2.png");
+    for i in 0..4 {
         player_animation.push(ani_str);
     }
     let player1 = mob::Player::new(32., 32., app.world.w/2., app.world.h/2., &player_animation, &mut window);
@@ -194,6 +197,12 @@ fn main() {
 
         if let Some(key) = e.release_args() {
             app.btn_release(&key);
+        }
+
+        if let Some(r) = e.resize_args() {
+            //print!("{:?}\n", r);
+            app.camera.w = r.draw_size[0] as f64;
+            app.camera.h = r.draw_size[1] as f64;
         }
     }
     println!("\nDone!");
